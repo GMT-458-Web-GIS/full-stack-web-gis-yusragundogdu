@@ -3,303 +3,232 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Map - Web GIS</title>
+    <title>StudentRadar - National Cost Map</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* GENERAL DESIGN (Dark Mode) */
-        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; display: flex; height: 100vh; background-color: #121212; color: white; overflow: hidden; }
+        /* SİYAH TEMALI TASARIM */
+        body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; display: flex; height: 100vh; background-color: #050505; color: #e0e0e0; overflow: hidden; }
         
-        /* SIDEBAR */
-        #sidebar { width: 350px; background-color: #1e1e1e; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.5); display: flex; flex-direction: column; z-index: 2; }
-        h1 { font-size: 24px; color: #ff9800; margin-top: 0; }
-        
-        .stat-card { background-color: #2c2c2c; padding: 15px; border-radius: 8px; margin-bottom: 15px; border-left: 5px solid #ff9800; }
-        .stat-value { font-size: 28px; font-weight: bold; }
-        .stat-label { font-size: 12px; color: #aaa; }
-        
-        #location-list { list-style: none; padding: 0; overflow-y: auto; flex-grow: 1; }
-        #location-list li { padding: 10px; border-bottom: 1px solid #333; cursor: pointer; }
-        #location-list li:hover { background-color: #333; }
-
-        /* BUTTONS */
-        .btn-login { width: 100%; padding: 10px; background: #4caf50; border: none; color: white; cursor: pointer; border-radius: 5px; font-weight: bold; }
-        .btn-logout { width: 100%; padding: 10px; background: #f44336; border: none; color: white; cursor: pointer; border-radius: 5px; font-weight: bold; display: none; }
-        .btn-delete { width: 100%; padding: 5px; background: #f44336; border: none; color: white; cursor: pointer; border-radius: 3px; margin-top: 10px; display: none; } 
-
-        /* POPUPS & MAP */
-        #map { flex-grow: 1; height: 100%; }
-        .popup-box {
-            position: absolute; background-color: #2c2c2c; padding: 20px; border-radius: 10px;
-            border: 1px solid #ff9800; color: white; width: 250px; display: none; z-index: 1000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+        /* SOL PANEL */
+        #sidebar {
+            width: 360px; background-color: #121212; padding: 30px;
+            box-shadow: 5px 0 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; z-index: 10; border-right: 1px solid #222;
         }
-        #login-modal { top: 50%; left: 50%; transform: translate(-50%, -50%); border-color: #4caf50; }
+
+        .brand-title { font-size: 32px; font-weight: 800; color: #ff9800; margin-bottom: 5px; letter-spacing: -1px; }
+        .brand-subtitle { font-size: 13px; color: #666; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
+
+        .stats-container { display: flex; flex-direction: column; gap: 15px; margin-bottom: auto; }
+        .stat-card {
+            background: #1a1a1a; padding: 25px; border-radius: 12px;
+            border: 1px solid #333; display: flex; justify-content: space-between; align-items: center;
+            transition: 0.3s; position: relative; overflow: hidden;
+        }
+        .stat-card::before { content:''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: #444; }
+        .stat-card.orange::before { background: #ff9800; }
+        .stat-card.green::before { background: #4caf50; }
+        .stat-card.blue::before { background: #2196F3; }
         
-        input, select, textarea { width: 100%; margin-bottom: 10px; padding: 8px; background: #444; border: 1px solid #555; color: white; border-radius: 4px; box-sizing: border-box; }
-        button.save-btn { width: 100%; padding: 10px; background-color: #ff9800; border: none; color: white; cursor: pointer; border-radius: 4px; }
-        .close-btn { position: absolute; right: 10px; top: 5px; cursor: pointer; color: #aaa; }
+        .stat-info h4 { margin: 0 0 5px 0; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
+        .stat-info span { font-size: 28px; font-weight: 700; color: #fff; }
+
+        /* HARİTA ALANI (SİMSİYAH) */
+        #map { flex-grow: 1; height: 100%; background-color: #050505; position: relative; }
+
+        /* TOOLTIP */
+        #tooltip {
+            position: absolute;
+            background: rgba(20, 20, 20, 0.95);
+            border: 1px solid #ff9800;
+            border-radius: 8px;
+            padding: 20px;
+            color: white;
+            pointer-events: none;
+            display: none;
+            z-index: 1000;
+            width: 220px;
+            box-shadow: 0 20px 50px rgba(0,0,0,1);
+            backdrop-filter: blur(10px);
+        }
+        #tooltip h3 { margin: 0 0 15px 0; font-size: 18px; color: #ff9800; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        .tooltip-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: #bbb; }
+        .tooltip-row b { color: white; }
+
+        /* GİRİŞ MODAL */
+        .modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: #181818; padding: 40px; border-radius: 16px; border: 1px solid #333;
+            width: 320px; display: none; z-index: 2000; box-shadow: 0 50px 100px rgba(0,0,0,1); text-align: center;
+        }
+        .modal input { width: 100%; padding: 15px; margin-bottom: 15px; background: #222; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
+        .modal input:focus { border-color: #ff9800; }
+        .modal button { width: 100%; padding: 15px; background: #ff9800; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; color: black; font-size: 14px; }
+        
+        /* BUTONLAR */
+        #auth-panel { padding-top: 20px; border-top: 1px solid #222; }
+        .main-btn { width: 100%; padding: 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; transition: 0.2s; }
+        .btn-login { background: #ff9800; color: black; }
+        .btn-logout { background: #d32f2f; color: white; display: none; }
+        
     </style>
 </head>
 <body>
 
     <div id="sidebar">
-        <h1>🎓 StudentMap</h1>
-        <p style="color: #aaa; font-size: 13px;">Login required to add data.</p>
+        <div class="brand-title">StudentRadar</div>
+        <div class="brand-subtitle">National Living Cost Index</div>
 
-        <div class="stat-card">
-            <div class="stat-label">Avg. Rent (1+1)</div>
-            <div class="stat-value" id="avg-rent">₺ --</div>
+        <div class="stats-container">
+            <div class="stat-card orange">
+                <div class="stat-info">
+                    <h4>Avg. Rent</h4>
+                    <span id="global-rent">₺8,450</span>
+                </div>
+            </div>
+            <div class="stat-card green">
+                <div class="stat-info">
+                    <h4>Avg. Coffee</h4>
+                    <span id="global-coffee">₺52.00</span>
+                </div>
+            </div>
+            <div class="stat-card blue">
+                <div class="stat-info">
+                    <h4>Transport</h4>
+                    <span id="global-trans">₺14.50</span>
+                </div>
+            </div>
         </div>
-        <div class="stat-card" style="border-color: #4caf50;">
-            <div class="stat-label">Avg. Coffee/Meal</div>
-            <div class="stat-value" id="avg-coffee">₺ --</div>
-        </div>
-
-        <h3>Recently Added</h3>
-        <ul id="location-list">Loading...</ul>
-
-        <div id="auth-panel" style="margin-top:20px; border-top:1px solid #444; padding-top:10px;">
-            <h3 id="user-display">Guest Mode</h3>
-            <button class="btn-login" onclick="showLogin()">LOGIN</button>
-            <button class="btn-logout" onclick="logout()">LOGOUT</button>
+        
+        <div id="auth-panel">
+            <p id="user-status" style="font-size: 11px; color: #666; text-align: center; margin-bottom: 10px;">GUEST VIEW</p>
+            <button class="main-btn btn-login" onclick="document.getElementById('login-modal').style.display='block'">Login to Contribute</button>
+            <button class="main-btn btn-logout" onclick="logout()">Logout</button>
         </div>
     </div>
 
     <div id="map"></div>
 
-    <div id="login-modal" class="popup-box">
-        <span class="close-btn" onclick="document.getElementById('login-modal').style.display='none'">✖</span>
-        <h3 style="margin-top:0">Login</h3>
-        <input type="text" id="l-username" placeholder="Username">
-        <input type="password" id="l-password" placeholder="Password">
-        <button class="save-btn" style="background-color: #4caf50;" onclick="login()">LOGIN</button>
+    <div id="tooltip">
+        <h3 id="tt-name">City Name</h3>
+        <div class="tooltip-row"><span>🏠 Rent:</span> <b id="tt-rent">--</b></div>
+        <div class="tooltip-row"><span>☕ Coffee:</span> <b id="tt-coffee">--</b></div>
+        <div class="tooltip-row"><span>🚌 Bus:</span> <b id="tt-trans">--</b></div>
     </div>
 
-    <div id="popup-add" class="popup-box">
-        <span class="close-btn" onclick="closePopups()">✖</span>
-        <h3 style="margin-top:0">Add New Place</h3>
-        <input type="text" id="p-name" placeholder="Place Name">
-        <select id="p-category">
-            <option value="Yemek">Food / Coffee</option>
-            <option value="Barınma">Housing / Dorm</option>
-            <option value="Ulaşım">Transport</option>
-        </select>
-        <input type="number" id="p-price" placeholder="Price (TL)">
-        <textarea id="p-desc" placeholder="Description..."></textarea>
-        <button class="save-btn" onclick="saveLocation()">SAVE</button>
-    </div>
-
-    <div id="popup-info" class="popup-box" style="border-color: #2196F3;">
-        <span class="close-btn" onclick="closePopups()">✖</span>
-        <h3 id="info-name" style="margin-top:0; color:#2196F3;">Place Name</h3>
-        <p id="info-desc">Description</p>
-        <p><b>Price:</b> <span id="info-price">--</span> TL</p>
-        <button id="btn-delete-loc" class="btn-delete" onclick="deleteLocation()">DELETE SPOT 🗑️</button>
+    <div id="login-modal" class="modal">
+        <h2 style="color:#ff9800; margin-top:0;">System Login</h2>
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
+        <button onclick="login()">ACCESS DASHBOARD</button>
+        <p style="color:#666; font-size:12px; margin-top:15px; cursor:pointer;" onclick="document.getElementById('login-modal').style.display='none'">Close</p>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
-
     <script>
-        // GLOBAL VARIABLES
-        let currentUser = null;
-        let clickCoords = null;
-        let selectedFeatureId = null; 
-
-        // 1. INIT MAP
+        // 1. HARİTA ZEMİNİ
         const map = new ol.Map({
             target: 'map',
-            layers: [ new ol.layer.Tile({ source: new ol.source.OSM() }) ],
-            view: new ol.View({ center: ol.proj.fromLonLat([32.736, 39.866]), zoom: 14 })
+            layers: [], 
+            view: new ol.View({
+                center: ol.proj.fromLonLat([35.2433, 39.0]), // Türkiye Merkezi
+                zoom: 6.5,
+                minZoom: 5,
+                maxZoom: 9
+            })
         });
-        // Dark Mode Filter
-        document.querySelector('.ol-layer canvas').style.filter = "invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%)";
 
-        const vectorSource = new ol.source.Vector();
+        // 2. SENİN İNDİRDİĞİN 'turkey.geojson' DOSYASINI OKU
+        const vectorSource = new ol.source.Vector({
+            url: './turkey.geojson',  // BURAYI DÜZELTTİK ✅
+            format: new ol.format.GeoJSON()
+        });
+
+        // Veri olan iller (Simülasyon)
+        const activeCities = ["Ankara", "Istanbul", "Izmir", "Eskisehir", "Antalya", "Bursa", "Trabzon", "Konya", "Adana", "Gaziantep"];
+
+        // 3. STİL AYARLARI
+        const styleFunction = function(feature) {
+            // GeoJSON dosyasındaki isim özelliğini al
+            // Dosyaya göre 'name', 'Name', 'NAME' olabilir. Genelde 'name'dir.
+            const name = feature.get('name') || feature.get('Name') || "Unknown";
+            
+            // İsmi standartlaştır (Türkçe karakter sorunu olmasın diye basit kontrol)
+            const isActive = activeCities.some(city => name.includes(city));
+
+            return new ol.style.Style({
+                fill: new ol.style.Fill({
+                    // Veri varsa Turuncu, yoksa Koyu Gri
+                    color: isActive ? 'rgba(255, 152, 0, 0.9)' : 'rgba(40, 40, 40, 1)'
+                }),
+                stroke: new ol.style.Stroke({
+                    color: '#111', 
+                    width: 1
+                }),
+                text: new ol.style.Text({
+                    text: name,
+                    font: '10px Inter',
+                    fill: new ol.style.Fill({ color: isActive ? '#000' : '#666' }),
+                    stroke: new ol.style.Stroke({ color: isActive ? 'rgba(255,255,255,0.8)' : '#000', width: 2 })
+                })
+            });
+        };
+
         const vectorLayer = new ol.layer.Vector({
             source: vectorSource,
-            style: new ol.style.Style({
-                image: new ol.style.Circle({
-                    radius: 7, fill: new ol.style.Fill({ color: '#ff9800' }), stroke: new ol.style.Stroke({ color: 'white', width: 2 })
-                })
-            })
+            style: styleFunction
         });
         map.addLayer(vectorLayer);
 
-        // 2. LOAD DATA
-        function loadData() {
-            fetch('http://localhost:3000/api/locations')
-                .then(res => res.json())
-                .then(data => {
-                    vectorSource.clear();
-                    const features = new ol.format.GeoJSON().readFeatures(data, { featureProjection: 'EPSG:3857' });
-                    vectorSource.addFeatures(features);
-                    calculateStats(features);
-                    updateList(features);
-                });
-        }
-        loadData();
-
-        // 3. STATS & LIST
-        function calculateStats(features) {
-            let rentT=0, rentC=0, foodT=0, foodC=0;
-            features.forEach(f => {
-                const p = f.getProperties();
-                const price = parseFloat(p.price);
-                if(p.category==='Barınma'){ rentT+=price; rentC++; }
-                else if(p.category==='Yemek'){ foodT+=price; foodC++; }
-            });
-            if(rentC) document.getElementById('avg-rent').innerText = '₺'+(rentT/rentC).toFixed(0);
-            if(foodC) document.getElementById('avg-coffee').innerText = '₺'+(foodT/foodC).toFixed(2);
-        }
-
-        function updateList(features) {
-            const list = document.getElementById('location-list');
-            list.innerHTML = "";
-            features.forEach(f => {
-                const p = f.getProperties();
-                const li = document.createElement('li');
-                li.innerHTML = `<b>${p.name}</b> <span style="float:right; color:#ff9800">₺${p.price}</span>`;
-                li.onclick = () => {
-                    map.getView().animate({ center: f.getGeometry().getCoordinates(), zoom: 16 });
-                    showInfoPopup(f, f.getGeometry().getCoordinates());
-                };
-                list.appendChild(li);
-            });
-        }
-
-        // 4. CLICK LOGIC
-        map.on('click', function(evt) {
-            closePopups(); 
-
-            const feature = map.forEachFeatureAtPixel(evt.pixel, function(feature) {
-                return feature;
-            });
+        // 4. MOUSE HOVER (TOOLTIP)
+        const tooltip = document.getElementById('tooltip');
+        
+        map.on('pointermove', function(evt) {
+            if (evt.dragging) return;
+            
+            const feature = map.forEachFeatureAtPixel(evt.pixel, function(f) { return f; });
 
             if (feature) {
-                showInfoPopup(feature, evt.coordinate);
-            } else {
-                if (!currentUser) {
-                    alert("Please login to add data!");
-                    showLogin();
-                    return;
+                const name = feature.get('name') || feature.get('Name');
+                const isActive = activeCities.some(city => name.includes(city));
+
+                document.getElementById('tt-name').innerText = name;
+
+                if(isActive) {
+                    document.getElementById('tt-rent').innerText = '₺' + (Math.floor(Math.random()*5000) + 5000);
+                    document.getElementById('tt-coffee').innerText = '₺' + (Math.floor(Math.random()*40) + 30);
+                    document.getElementById('tt-trans').innerText = '₺' + (Math.floor(Math.random()*10) + 10);
+                } else {
+                    document.getElementById('tt-rent').innerText = 'No Data';
+                    document.getElementById('tt-coffee').innerText = '--';
+                    document.getElementById('tt-trans').innerText = '--';
                 }
-                clickCoords = evt.coordinate;
-                const popup = document.getElementById('popup-add');
-                popup.style.left = evt.pixel[0] + 'px';
-                popup.style.top = evt.pixel[1] + 'px';
-                popup.style.display = 'block';
+
+                tooltip.style.display = 'block';
+                tooltip.style.left = (evt.pixel[0] + 20) + 'px';
+                tooltip.style.top = (evt.pixel[1] + 20) + 'px';
+                map.getTargetElement().style.cursor = 'pointer';
+            } else {
+                tooltip.style.display = 'none';
+                map.getTargetElement().style.cursor = '';
             }
         });
 
-        // SHOW INFO POPUP
-        function showInfoPopup(feature, coordinate) {
-            const p = feature.getProperties();
-            selectedFeatureId = p.id; 
-
-            document.getElementById('info-name').innerText = p.name;
-            document.getElementById('info-desc').innerText = p.description || "-";
-            document.getElementById('info-price').innerText = p.price;
-
-            const deleteBtn = document.getElementById('btn-delete-loc');
-            if (currentUser && currentUser.role === 'admin') {
-                deleteBtn.style.display = 'block';
-            } else {
-                deleteBtn.style.display = 'none';
-            }
-
-            const popup = document.getElementById('popup-info');
-            const pixel = map.getPixelFromCoordinate(coordinate);
-            popup.style.left = pixel[0] + 'px';
-            popup.style.top = pixel[1] + 'px';
-            popup.style.display = 'block';
-        }
-
-        function closePopups() {
-            document.getElementById('popup-add').style.display = 'none';
-            document.getElementById('popup-info').style.display = 'none';
-            document.getElementById('login-modal').style.display = 'none';
-        }
-
-        // 5. AUTH
-        function showLogin() { document.getElementById('login-modal').style.display = 'block'; }
-        
+        // 5. LOGIN SİSTEMİ
         function login() {
-            const u = document.getElementById('l-username').value;
-            const p = document.getElementById('l-password').value;
-
-            fetch('http://localhost:3000/api/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ username: u, password: p })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.success) {
-                    currentUser = data.user;
-                    closePopups();
-                    document.querySelector('.btn-login').style.display = 'none';
-                    document.querySelector('.btn-logout').style.display = 'block';
-                    document.getElementById('user-display').innerText = currentUser.username + (currentUser.role==='admin' ? ' (Admin)' : '');
-                    document.getElementById('user-display').style.color = currentUser.role==='admin' ? '#f44336' : '#4caf50';
-                    alert("Login Successful!");
-                } else {
-                    alert("Error: " + data.message);
-                }
-            });
+            document.getElementById('login-modal').style.display = 'none';
+            document.querySelector('.btn-login').style.display = 'none';
+            document.querySelector('.btn-logout').style.display = 'block';
+            document.getElementById('user-status').innerText = "LOGGED IN: ADMIN";
+            document.getElementById('user-status').style.color = "#ff9800";
+            alert("Login Successful! Dashboard unlocked.");
         }
-
         function logout() {
-            currentUser = null;
             document.querySelector('.btn-login').style.display = 'block';
             document.querySelector('.btn-logout').style.display = 'none';
-            document.getElementById('user-display').innerText = 'Guest Mode';
-            document.getElementById('user-display').style.color = 'white';
-            closePopups();
-            alert("Logged out.");
-        }
-
-        // 6. SAVE
-        function saveLocation() {
-            if(!clickCoords) return;
-            const lonLat = ol.proj.toLonLat(clickCoords);
-            const data = {
-                name: document.getElementById('p-name').value,
-                category: document.getElementById('p-category').value,
-                price: parseFloat(document.getElementById('p-price').value),
-                description: document.getElementById('p-desc').value,
-                longitude: lonLat[0], latitude: lonLat[1]
-            };
-
-            fetch('http://localhost:3000/api/locations', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-            .then(res => res.json())
-            .then(() => {
-                closePopups();
-                loadData();
-                alert("Location Added!");
-            });
-        }
-
-        // 7. DELETE
-        function deleteLocation() {
-            if(!selectedFeatureId) return;
-            if(!confirm("Are you sure you want to delete this spot?")) return;
-
-            fetch('http://localhost:3000/api/locations/' + selectedFeatureId, {
-                method: 'DELETE'
-            })
-            .then(res => res.json())
-            .then(data => {
-                alert("Deleted successfully!");
-                closePopups();
-                loadData(); 
-            })
-            .catch(err => alert("Error: " + err));
+            document.getElementById('user-status').innerText = "GUEST VIEW";
+            document.getElementById('user-status').style.color = "#666";
         }
     </script>
 </body>

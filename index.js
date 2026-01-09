@@ -8,7 +8,9 @@ const port = 3000;
 
 // Middleware
 app.use(cors());
-app.use(express.json()); // Gelen JSON verilerini okumak için şart
+app.use(express.static('.'));
+app.use(express.json()); 
+app.use(express.static('.'));
 
 // Veritabanı Bağlantısı
 const pool = new Pool({
