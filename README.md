@@ -39,9 +39,6 @@ This project is built on a modern **Full-Stack Web GIS** architecture:
 - **Database (Spatial):** - **PostgreSQL & PostGIS:** The backbone of the project. Used for storing geospatial points and executing spatial queries (e.g., *buffer analysis*, *spatial joins*).
 - **Version Control:** Git & GitHub
 
-## 🚀 Installation & Setup Guide
-
-To run this project locally, follow these steps:
 
 ## 🎯 Conclusion & Future Scope
 
