@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
     
     <style>
-        /* SİYAH TEMALI TASARIM */
+        /* --- SİYAH TEMALI TASARIM --- */
         body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; display: flex; height: 100vh; background-color: #050505; color: #e0e0e0; overflow: hidden; }
         
         /* SOL PANEL */
@@ -34,44 +34,44 @@
         .stat-info h4 { margin: 0 0 5px 0; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
         .stat-info span { font-size: 28px; font-weight: 700; color: #fff; }
 
-        /* HARİTA ALANI (SİMSİYAH) */
+        /* HARİTA ALANI */
         #map { flex-grow: 1; height: 100%; background-color: #050505; position: relative; }
 
         /* TOOLTIP */
         #tooltip {
-            position: absolute;
-            background: rgba(20, 20, 20, 0.95);
-            border: 1px solid #ff9800;
-            border-radius: 8px;
-            padding: 20px;
-            color: white;
-            pointer-events: none;
-            display: none;
-            z-index: 1000;
-            width: 220px;
-            box-shadow: 0 20px 50px rgba(0,0,0,1);
-            backdrop-filter: blur(10px);
+            position: absolute; background: rgba(20, 20, 20, 0.95); border: 1px solid #ff9800;
+            border-radius: 8px; padding: 20px; color: white; pointer-events: none; display: none;
+            z-index: 1000; width: 260px;
+            box-shadow: 0 20px 50px rgba(0,0,0,1); backdrop-filter: blur(10px);
         }
         #tooltip h3 { margin: 0 0 15px 0; font-size: 18px; color: #ff9800; border-bottom: 1px solid #444; padding-bottom: 10px; }
-        .tooltip-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; color: #bbb; }
+        .tooltip-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: #bbb; }
         .tooltip-row b { color: white; }
 
-        /* GİRİŞ MODAL */
+        /* MODAL PENCERELER */
         .modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
             background: #181818; padding: 40px; border-radius: 16px; border: 1px solid #333;
             width: 320px; display: none; z-index: 2000; box-shadow: 0 50px 100px rgba(0,0,0,1); text-align: center;
         }
-        .modal input { width: 100%; padding: 15px; margin-bottom: 15px; background: #222; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
-        .modal input:focus { border-color: #ff9800; }
+        .modal input, .modal select { width: 100%; padding: 15px; margin-bottom: 15px; background: #222; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
+        .modal input:focus, .modal select:focus { border-color: #ff9800; }
         .modal button { width: 100%; padding: 15px; background: #ff9800; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; color: black; font-size: 14px; }
         
         /* BUTONLAR */
         #auth-panel { padding-top: 20px; border-top: 1px solid #222; }
-        .main-btn { width: 100%; padding: 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; transition: 0.2s; }
+        .main-btn { width: 100%; padding: 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; transition: 0.2s; margin-bottom: 10px; }
         .btn-login { background: #ff9800; color: black; }
+        .btn-add { background: #4caf50; color: white; display: none; }
         .btn-logout { background: #d32f2f; color: white; display: none; }
-        
+
+        /* TOAST BİLDİRİMİ */
+        #toast {
+            visibility: hidden; min-width: 250px; background-color: #222; color: #fff; text-align: center;
+            border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px;
+            transform: translateX(-50%); border-left: 5px solid #ff9800; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
@@ -83,26 +83,25 @@
         <div class="stats-container">
             <div class="stat-card orange">
                 <div class="stat-info">
-                    <h4>Avg. Rent</h4>
-                    <span id="global-rent">₺8,450</span>
-                </div>
+                    <h4>Avg. Rent (TR)</h4>
+                    <span id="global-rent">Calculating...</span> </div>
             </div>
             <div class="stat-card green">
                 <div class="stat-info">
                     <h4>Avg. Coffee</h4>
-                    <span id="global-coffee">₺52.00</span>
-                </div>
+                    <span id="global-coffee">Calculating...</span> </div>
             </div>
             <div class="stat-card blue">
                 <div class="stat-info">
-                    <h4>Transport</h4>
-                    <span id="global-trans">₺14.50</span>
-                </div>
+                    <h4>Avg. Abonman</h4>
+                    <span id="global-trans">Calculating...</span> </div>
             </div>
         </div>
         
         <div id="auth-panel">
             <p id="user-status" style="font-size: 11px; color: #666; text-align: center; margin-bottom: 10px;">GUEST VIEW</p>
+            
+            <button class="main-btn btn-add" onclick="document.getElementById('add-data-modal').style.display='block'">+ ADD DATA</button>
             <button class="main-btn btn-login" onclick="document.getElementById('login-modal').style.display='block'">Login to Contribute</button>
             <button class="main-btn btn-logout" onclick="logout()">Logout</button>
         </div>
@@ -112,59 +111,128 @@
 
     <div id="tooltip">
         <h3 id="tt-name">City Name</h3>
-        <div class="tooltip-row"><span>🏠 Rent:</span> <b id="tt-rent">--</b></div>
+        <div class="tooltip-row"><span>🏠 Rent (1+1):</span> <b id="tt-rent">--</b></div>
         <div class="tooltip-row"><span>☕ Coffee:</span> <b id="tt-coffee">--</b></div>
-        <div class="tooltip-row"><span>🚌 Bus:</span> <b id="tt-trans">--</b></div>
+        <div class="tooltip-row"><span>🎫 Single Ride:</span> <b id="tt-single">--</b></div>
+        <div class="tooltip-row" style="border-top:1px solid #333; padding-top:5px; margin-top:5px;">
+            <span style="color:#ff9800">💳 Abonman:</span> <b id="tt-sub" style="color:#ff9800">--</b>
+        </div>
     </div>
+
+    <div id="toast"><span id="toast-msg">Notification</span></div>
 
     <div id="login-modal" class="modal">
         <h2 style="color:#ff9800; margin-top:0;">System Login</h2>
-        <input type="text" id="username" placeholder="Username">
+        <input type="text" id="username" placeholder="Username (Any name or 'admin')">
         <input type="password" id="password" placeholder="Password">
         <button onclick="login()">ACCESS DASHBOARD</button>
         <p style="color:#666; font-size:12px; margin-top:15px; cursor:pointer;" onclick="document.getElementById('login-modal').style.display='none'">Close</p>
     </div>
 
+    <div id="add-data-modal" class="modal">
+        <h2 style="color:#4caf50; margin-top:0;">Contribute Data 📝</h2>
+        <p style="color:#aaa; font-size:12px; margin-bottom:15px;">Share prices from your city.</p>
+        
+        <select id="data-city">
+            <option value="Ankara">Ankara</option>
+            <option value="İstanbul">İstanbul</option>
+            <option value="İzmir">İzmir</option>
+            <option value="Trabzon">Trabzon</option>
+            <option value="Antalya">Antalya</option>
+        </select>
+
+        <select id="data-category">
+            <option value="Rent">🏠 Rent (1+1)</option>
+            <option value="Coffee">☕ Coffee</option>
+            <option value="Abonman">💳 Abonman</option>
+            <option value="Transport">🎫 Single Ticket</option>
+        </select>
+
+        <input type="number" id="data-price" placeholder="Price (TL)">
+        <button onclick="submitData()" style="background:#4caf50; color:white;">SUBMIT DATA</button>
+        <p style="color:#666; font-size:12px; margin-top:10px; cursor:pointer;" onclick="document.getElementById('add-data-modal').style.display='none'">Cancel</p>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
     <script>
-        // 1. HARİTA ZEMİNİ
+        // --- GÜNCEL VERİ SETİ (İZMİR 480 TL) ---
+        const realMarketData = {
+            "İstanbul":  { rent: "35.000", coffee: "125.00", single: "17.70",  sub: "494" }, 
+            "Ankara":    { rent: "18.500", coffee: "85.00", single: "15.00", sub: "450" }, 
+            
+            // İzmir: Fiyat Düzeltildi 480 TL ✅
+            "İzmir":     { rent: "22.500", coffee: "95.00", single: "7.50",  sub: "480" },   
+            
+            "Eskişehir": { rent: "16.000", coffee: "70.00", single: "10.00",  sub: "250" }, 
+            "Bursa":     { rent: "19.000", coffee: "80.00", single: "9.00",  sub: "300" }, 
+            "Antalya":   { rent: "26.000", coffee: "100.00", single: "10.00",  sub: "300" }, 
+            
+            "Trabzon":   { rent: "14.500", coffee: "65.00", single: "12.00",  sub: "--" }, 
+            "Konya":     { rent: "13.500", coffee: "60.00", single: "6.00",  sub: "300" },
+            "Adana":     { rent: "15.500", coffee: "70.00", single: "9.50",  sub: "--" },
+            "Gaziantep": { rent: "16.500", coffee: "75.00", single: "13.00", sub: "--" }
+        };
+
+        const activeCities = Object.keys(realMarketData); 
+
+        // --- ORTALAMA HESAPLAMA MOTORU (OTOMATİK) ---
+        function calculateGlobalStats() {
+            let totalRent = 0, countRent = 0;
+            let totalCoffee = 0, countCoffee = 0;
+            let totalSub = 0, countSub = 0;
+
+            Object.values(realMarketData).forEach(city => {
+                // Kira Hesapla
+                let r = parseFloat(city.rent.replace('.', ''));
+                if(r) { totalRent += r; countRent++; }
+
+                // Kahve Hesapla
+                let c = parseFloat(city.coffee);
+                if(c) { totalCoffee += c; countCoffee++; }
+
+                // Abonman Hesapla (Sadece geçerli olanları al, "--" olanları atla)
+                if(city.sub !== "-" && city.sub !== "--") {
+                    let s = parseFloat(city.sub);
+                    if(s) { totalSub += s; countSub++; }
+                }
+            });
+
+            // Ekrana Yazdır
+            // Kira: Binlik ayracı koyarak yaz (₺18.250 gibi)
+            document.getElementById('global-rent').innerText = '₺' + (totalRent / countRent).toLocaleString('tr-TR', {maximumFractionDigits: 0});
+            
+            // Kahve ve Ulaşım: Küsüratlı (₺72.50)
+            document.getElementById('global-coffee').innerText = '₺' + (totalCoffee / countCoffee).toFixed(2);
+            document.getElementById('global-trans').innerText = '₺' + (totalSub / countSub).toFixed(2);
+        }
+
+        // --- 1. HARİTA AYARLARI ---
         const map = new ol.Map({
             target: 'map',
             layers: [], 
             view: new ol.View({
-                center: ol.proj.fromLonLat([35.2433, 39.0]), // Türkiye Merkezi
-                zoom: 6.5,
-                minZoom: 5,
-                maxZoom: 9
+                center: ol.proj.fromLonLat([35.2433, 39.0]), 
+                zoom: 6.5, minZoom: 5, maxZoom: 9
             })
         });
 
-        // 2. SENİN İNDİRDİĞİN 'turkey.geojson' DOSYASINI OKU
+        // --- 2. VERİ DOSYASI ---
         const vectorSource = new ol.source.Vector({
-            url: './turkey.geojson',  // BURAYI DÜZELTTİK ✅
+            url: './turkey.geojson',
             format: new ol.format.GeoJSON()
         });
 
-        // Veri olan iller (Simülasyon)
-        const activeCities = ["Ankara", "Istanbul", "Izmir", "Eskisehir", "Antalya", "Bursa", "Trabzon", "Konya", "Adana", "Gaziantep"];
-
-        // 3. STİL AYARLARI
+        // --- 3. STİL ---
         const styleFunction = function(feature) {
-            // GeoJSON dosyasındaki isim özelliğini al
-            // Dosyaya göre 'name', 'Name', 'NAME' olabilir. Genelde 'name'dir.
             const name = feature.get('name') || feature.get('Name') || "Unknown";
-            
-            // İsmi standartlaştır (Türkçe karakter sorunu olmasın diye basit kontrol)
-            const isActive = activeCities.some(city => name.includes(city));
+            const isActive = activeCities.includes(name);
 
             return new ol.style.Style({
                 fill: new ol.style.Fill({
-                    // Veri varsa Turuncu, yoksa Koyu Gri
                     color: isActive ? 'rgba(255, 152, 0, 0.9)' : 'rgba(40, 40, 40, 1)'
                 }),
                 stroke: new ol.style.Stroke({
-                    color: '#111', 
-                    width: 1
+                    color: '#111', width: 1
                 }),
                 text: new ol.style.Text({
                     text: name,
@@ -181,30 +249,32 @@
         });
         map.addLayer(vectorLayer);
 
-        // 4. MOUSE HOVER (TOOLTIP)
+        // --- 4. TOOLTIP ---
         const tooltip = document.getElementById('tooltip');
-        
         map.on('pointermove', function(evt) {
             if (evt.dragging) return;
-            
-            const feature = map.forEachFeatureAtPixel(evt.pixel, function(f) { return f; });
-
+            const feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
             if (feature) {
-                const name = feature.get('name') || feature.get('Name');
-                const isActive = activeCities.some(city => name.includes(city));
+                let name = feature.get('name') || feature.get('Name');
+                const matchedCity = activeCities.find(city => city === name);
 
                 document.getElementById('tt-name').innerText = name;
-
-                if(isActive) {
-                    document.getElementById('tt-rent').innerText = '₺' + (Math.floor(Math.random()*5000) + 5000);
-                    document.getElementById('tt-coffee').innerText = '₺' + (Math.floor(Math.random()*40) + 30);
-                    document.getElementById('tt-trans').innerText = '₺' + (Math.floor(Math.random()*10) + 10);
+                
+                if(matchedCity) {
+                    const data = realMarketData[matchedCity];
+                    document.getElementById('tt-rent').innerText = '₺' + data.rent;
+                    document.getElementById('tt-coffee').innerText = '₺' + data.coffee;
+                    document.getElementById('tt-single').innerText = '₺' + data.single;
+                    
+                    const subText = data.sub !== "--" && data.sub !== "-" ? '₺' + data.sub + ' / mo' : 'Not Available';
+                    document.getElementById('tt-sub').innerText = subText;
+                    
                 } else {
                     document.getElementById('tt-rent').innerText = 'No Data';
                     document.getElementById('tt-coffee').innerText = '--';
-                    document.getElementById('tt-trans').innerText = '--';
+                    document.getElementById('tt-single').innerText = '--';
+                    document.getElementById('tt-sub').innerText = '--';
                 }
-
                 tooltip.style.display = 'block';
                 tooltip.style.left = (evt.pixel[0] + 20) + 'px';
                 tooltip.style.top = (evt.pixel[1] + 20) + 'px';
@@ -215,21 +285,70 @@
             }
         });
 
-        // 5. LOGIN SİSTEMİ
+        // --- 5. GİRİŞ SİSTEMİ ---
         function login() {
+            const u = document.getElementById('username').value.trim();
+            const p = document.getElementById('password').value;
+            const statusText = document.getElementById('user-status');
+
+            if (u === "") {
+                showToast("⚠️ Please enter a username!");
+                return;
+            }
+
+            if (u === 'admin' && p === '1234') {
+                statusText.innerText = "LOGGED IN: ADMIN";
+                statusText.style.color = "#d32f2f"; 
+                showToast("🔓 Welcome back, Admin!");
+            } else {
+                statusText.innerText = "LOGGED IN: " + u.toUpperCase();
+                statusText.style.color = "#4caf50";
+                showToast("🚀 Welcome " + u + "! Ready to contribute.");
+            }
+            
             document.getElementById('login-modal').style.display = 'none';
             document.querySelector('.btn-login').style.display = 'none';
             document.querySelector('.btn-logout').style.display = 'block';
-            document.getElementById('user-status').innerText = "LOGGED IN: ADMIN";
-            document.getElementById('user-status').style.color = "#ff9800";
-            alert("Login Successful! Dashboard unlocked.");
+            document.querySelector('.btn-add').style.display = 'block';
         }
+
         function logout() {
             document.querySelector('.btn-login').style.display = 'block';
             document.querySelector('.btn-logout').style.display = 'none';
+            document.querySelector('.btn-add').style.display = 'none';
+            
             document.getElementById('user-status').innerText = "GUEST VIEW";
             document.getElementById('user-status').style.color = "#666";
+            document.getElementById('username').value = "";
+            document.getElementById('password').value = "";
+            
+            showToast("👋 Logged out successfully.");
         }
+
+        function submitData() {
+            const city = document.getElementById('data-city').value;
+            const cat = document.getElementById('data-category').value;
+            const price = document.getElementById('data-price').value;
+
+            if(!price) {
+                showToast("⚠️ Please enter a price!");
+                return;
+            }
+            showToast(`✅ Added: ${cat} in ${city} for ₺${price}`);
+            document.getElementById('add-data-modal').style.display = 'none';
+            document.getElementById('data-price').value = "";
+        }
+
+        function showToast(message) {
+            const x = document.getElementById("toast");
+            document.getElementById("toast-msg").innerText = message;
+            x.style.visibility = "visible";
+            setTimeout(function(){ x.style.visibility = "hidden"; }, 3000);
+        }
+
+        // Sayfa Yüklenince Ortalamaları Hesapla
+        calculateGlobalStats();
+
     </script>
 </body>
 </html>
