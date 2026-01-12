@@ -5,73 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StudentRadar - National Cost Map</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v8.2.0/ol.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
-        /* --- SİYAH TEMALI TASARIM --- */
+        /* --- GENERAL DESIGN --- */
         body { margin: 0; padding: 0; font-family: 'Inter', sans-serif; display: flex; height: 100vh; background-color: #050505; color: #e0e0e0; overflow: hidden; }
         
-        /* SOL PANEL */
-        #sidebar {
-            width: 360px; background-color: #121212; padding: 30px;
-            box-shadow: 5px 0 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; z-index: 10; border-right: 1px solid #222;
-        }
-
+        #sidebar { width: 360px; background-color: #121212; padding: 30px; box-shadow: 5px 0 30px rgba(0,0,0,0.5); display: flex; flex-direction: column; z-index: 10; border-right: 1px solid #222; }
         .brand-title { font-size: 32px; font-weight: 800; color: #ff9800; margin-bottom: 5px; letter-spacing: -1px; }
         .brand-subtitle { font-size: 13px; color: #666; margin-bottom: 40px; text-transform: uppercase; letter-spacing: 2px; font-weight: 600; }
-
-        .stats-container { display: flex; flex-direction: column; gap: 15px; margin-bottom: auto; }
-        .stat-card {
-            background: #1a1a1a; padding: 25px; border-radius: 12px;
-            border: 1px solid #333; display: flex; justify-content: space-between; align-items: center;
-            transition: 0.3s; position: relative; overflow: hidden;
-        }
-        .stat-card::before { content:''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: #444; }
-        .stat-card.orange::before { background: #ff9800; }
-        .stat-card.green::before { background: #4caf50; }
-        .stat-card.blue::before { background: #2196F3; }
         
+        .stats-container { display: flex; flex-direction: column; gap: 15px; margin-bottom: auto; }
+        .stat-card { background: #1a1a1a; padding: 25px; border-radius: 12px; border: 1px solid #333; display: flex; justify-content: space-between; align-items: center; }
+        .stat-card.orange { border-left: 5px solid #ff9800; } .stat-card.green { border-left: 5px solid #4caf50; } .stat-card.blue { border-left: 5px solid #2196F3; }
         .stat-info h4 { margin: 0 0 5px 0; font-size: 11px; color: #888; text-transform: uppercase; letter-spacing: 1px; }
         .stat-info span { font-size: 28px; font-weight: 700; color: #fff; }
 
-        /* HARİTA ALANI */
         #map { flex-grow: 1; height: 100%; background-color: #050505; position: relative; }
 
-        /* TOOLTIP */
-        #tooltip {
-            position: absolute; background: rgba(20, 20, 20, 0.95); border: 1px solid #ff9800;
-            border-radius: 8px; padding: 20px; color: white; pointer-events: none; display: none;
-            z-index: 1000; width: 260px;
-            box-shadow: 0 20px 50px rgba(0,0,0,1); backdrop-filter: blur(10px);
-        }
-        #tooltip h3 { margin: 0 0 15px 0; font-size: 18px; color: #ff9800; border-bottom: 1px solid #444; padding-bottom: 10px; }
-        .tooltip-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: #bbb; }
-        .tooltip-row b { color: white; }
+        /* --- DETAIL PANEL --- */
+        #city-detail-panel { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: #050505; z-index: 5000; display: none; overflow-y: auto; padding: 40px; box-sizing: border-box; }
+        .detail-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; border-bottom: 1px solid #333; padding-bottom: 20px; }
+        .detail-title { font-size: 48px; font-weight: 800; color: white; margin: 0; }
+        .close-btn { background: #222; color: white; border: 1px solid #444; padding: 10px 25px; border-radius: 30px; cursor: pointer; font-weight: bold; transition: 0.2s; }
+        .close-btn:hover { background: #ff9800; color: black; border-color: #ff9800; }
 
-        /* MODAL PENCERELER */
-        .modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: #181818; padding: 40px; border-radius: 16px; border: 1px solid #333;
-            width: 320px; display: none; z-index: 2000; box-shadow: 0 50px 100px rgba(0,0,0,1); text-align: center;
+        .detail-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .detail-card { background: #121212; border: 1px solid #222; border-radius: 16px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; height: 180px; position: relative; transition: transform 0.2s; }
+        .detail-card:hover { transform: translateY(-5px); border-color: #333; }
+        .dc-icon { font-size: 24px; margin-bottom: 5px; }
+        .dc-label { font-size: 13px; color: #888; font-weight: 600; text-transform: uppercase; }
+        .dc-value { font-size: 32px; font-weight: 800; color: #ff9800; margin-top: 5px; margin-bottom: 5px; }
+        .dc-sub { font-size: 11px; color: #555; }
+
+        /* CONTRIBUTE BUTTON (Hidden by default) */
+        .card-add-btn { 
+            display: none; 
+            margin-top: auto; width: 100%; padding: 10px; 
+            background: transparent; border: 1px dashed #444; color: #888;
+            font-size: 12px; font-weight: 600; border-radius: 8px; cursor: pointer; transition: 0.2s; 
         }
-        .modal input, .modal select { width: 100%; padding: 15px; margin-bottom: 15px; background: #222; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
-        .modal input:focus, .modal select:focus { border-color: #ff9800; }
-        .modal button { width: 100%; padding: 15px; background: #ff9800; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; color: black; font-size: 14px; }
+        .card-add-btn:hover { background: #1a1a1a; border-color: #ff9800; color: #ff9800; }
+
+        /* MODAL */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); z-index: 6000; display: none; align-items: center; justify-content: center; }
+        .modern-modal { background: #181818; width: 420px; border-radius: 16px; border: 1px solid #333; box-shadow: 0 50px 100px rgba(0,0,0,0.8); overflow: hidden; font-family: 'Inter', sans-serif; }
+        .mm-header { padding: 20px 25px; border-bottom: 1px solid #2a2a2a; display: flex; justify-content: space-between; align-items: center; }
+        .mm-title-group { display: flex; align-items: center; gap: 15px; } .mm-icon { font-size: 24px; } .mm-title h3 { margin: 0; font-size: 16px; color: white; font-weight: 700; } .mm-title span { font-size: 12px; color: #888; }
+        .mm-close { cursor: pointer; color: #666; font-size: 20px; transition: 0.2s; } .mm-close:hover { color: white; }
+        .mm-body { padding: 25px; } 
+        .mm-stat-box { background: #202020; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+        .mm-stat-label { font-size: 12px; color: #888; margin-bottom: 5px; } .mm-stat-value { font-size: 28px; font-weight: 800; color: #ff9800; } .mm-stat-sub { font-size: 11px; color: #555; margin-top: 3px; }
+        .mm-input-group { margin-bottom: 20px; } .mm-input-label { display: block; font-size: 13px; color: #ccc; margin-bottom: 8px; font-weight: 500; } .mm-input-wrapper { position: relative; }
+        .mm-input { width: 100%; background: #2a2a2a; border: 1px solid #333; padding: 14px; border-radius: 8px; color: white; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.2s; }
+        .mm-input:focus { border-color: #555; background: #333; } .mm-unit { position: absolute; right: 15px; top: 14px; color: #666; font-size: 14px; }
+        .mm-btn { width: 100%; background: #3a3a3a; color: white; padding: 14px; border: 1px solid #444; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .mm-btn:hover { background: #4a4a4a; border-color: #666; }
+
+        /* Login Modal */
+        .simple-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #181818; padding: 40px; border-radius: 16px; border: 1px solid #333; width: 320px; display: none; z-index: 7000; text-align: center; }
+        .simple-modal input { width: 100%; padding: 15px; margin-bottom: 15px; background: #222; border: 1px solid #333; color: white; border-radius: 8px; box-sizing: border-box; }
+        .simple-modal button { width: 100%; padding: 15px; background: #ff9800; border: none; font-weight: bold; border-radius: 8px; cursor: pointer; color: black; }
         
-        /* BUTONLAR */
         #auth-panel { padding-top: 20px; border-top: 1px solid #222; }
         .main-btn { width: 100%; padding: 15px; border-radius: 8px; border: none; font-weight: bold; cursor: pointer; text-transform: uppercase; letter-spacing: 1px; font-size: 12px; transition: 0.2s; margin-bottom: 10px; }
-        .btn-login { background: #ff9800; color: black; }
-        .btn-add { background: #4caf50; color: white; display: none; }
-        .btn-logout { background: #d32f2f; color: white; display: none; }
-
-        /* TOAST BİLDİRİMİ */
-        #toast {
-            visibility: hidden; min-width: 250px; background-color: #222; color: #fff; text-align: center;
-            border-radius: 8px; padding: 16px; position: fixed; z-index: 3000; left: 50%; bottom: 30px;
-            transform: translateX(-50%); border-left: 5px solid #ff9800; box-shadow: 0 10px 30px rgba(0,0,0,0.8);
-            font-size: 14px;
-        }
+        .btn-login { background: #ff9800; color: black; } .btn-logout { background: #d32f2f; color: white; display: none; }
+        
+        #toast { visibility: hidden; min-width: 250px; background-color: #222; color: #fff; text-align: center; border-radius: 8px; padding: 16px; position: fixed; z-index: 8000; left: 50%; bottom: 30px; transform: translateX(-50%); border-left: 5px solid #ff9800; box-shadow: 0 10px 30px rgba(0,0,0,0.8); font-size: 14px; }
+        #tooltip { position: absolute; background: rgba(20,20,20,0.95); border: 1px solid #ff9800; border-radius:8px; padding:15px; color:white; display:none; z-index:1000; pointer-events:none; }
     </style>
 </head>
 <body>
@@ -79,276 +80,290 @@
     <div id="sidebar">
         <div class="brand-title">StudentRadar</div>
         <div class="brand-subtitle">National Living Cost Index</div>
-
         <div class="stats-container">
-            <div class="stat-card orange">
-                <div class="stat-info">
-                    <h4>Avg. Rent (TR)</h4>
-                    <span id="global-rent">Calculating...</span> </div>
-            </div>
-            <div class="stat-card green">
-                <div class="stat-info">
-                    <h4>Avg. Coffee</h4>
-                    <span id="global-coffee">Calculating...</span> </div>
-            </div>
-            <div class="stat-card blue">
-                <div class="stat-info">
-                    <h4>Avg. Abonman</h4>
-                    <span id="global-trans">Calculating...</span> </div>
-            </div>
+            <div class="stat-card orange"><div class="stat-info"><h4>Avg. Rent (TR)</h4><span id="global-rent">Loading...</span></div></div>
+            <div class="stat-card green"><div class="stat-info"><h4>Avg. Coffee</h4><span id="global-coffee">Loading...</span></div></div>
+            <div class="stat-card blue"><div class="stat-info"><h4>Avg. Student Pass</h4><span id="global-trans">Loading...</span></div></div>
         </div>
-        
         <div id="auth-panel">
             <p id="user-status" style="font-size: 11px; color: #666; text-align: center; margin-bottom: 10px;">GUEST VIEW</p>
-            
-            <button class="main-btn btn-add" onclick="document.getElementById('add-data-modal').style.display='block'">+ ADD DATA</button>
             <button class="main-btn btn-login" onclick="document.getElementById('login-modal').style.display='block'">Login to Contribute</button>
             <button class="main-btn btn-logout" onclick="logout()">Logout</button>
         </div>
     </div>
 
     <div id="map"></div>
+    <div id="tooltip"></div>
 
-    <div id="tooltip">
-        <h3 id="tt-name">City Name</h3>
-        <div class="tooltip-row"><span>🏠 Rent (1+1):</span> <b id="tt-rent">--</b></div>
-        <div class="tooltip-row"><span>☕ Coffee:</span> <b id="tt-coffee">--</b></div>
-        <div class="tooltip-row"><span>🎫 Single Ride:</span> <b id="tt-single">--</b></div>
-        <div class="tooltip-row" style="border-top:1px solid #333; padding-top:5px; margin-top:5px;">
-            <span style="color:#ff9800">💳 Abonman:</span> <b id="tt-sub" style="color:#ff9800">--</b>
+    <div id="city-detail-panel">
+        <div class="detail-header">
+            <h1 class="detail-title" id="dp-city-name">City</h1>
+            <button class="close-btn" onclick="closeCityPanel()">← BACK TO MAP</button>
+        </div>
+        <div class="detail-grid">
+            <div class="detail-card">
+                <div><div class="dc-icon">💰</div><div class="dc-label">Avg. Salary (Net)</div><div class="dc-value" id="dp-salary">₺0</div></div>
+                <button class="card-add-btn" onclick="openAddData('Salary')">+ Contribute</button>
+            </div>
+            <div class="detail-card" style="border-color: #ff9800;">
+                <div><div class="dc-icon">🏠</div><div class="dc-label">Avg. Rent (1+1)</div><div class="dc-value" id="dp-rent">₺0</div></div>
+                <button class="card-add-btn" onclick="openAddData('Rent')">+ Contribute</button>
+            </div>
+            <div class="detail-card">
+                <div><div class="dc-icon">🛒</div><div class="dc-label">Monthly Expenses</div><div class="dc-value" id="dp-expense">₺0</div></div>
+                <button class="card-add-btn" onclick="openAddData('Expense')">+ Contribute</button>
+            </div>
+            <div class="detail-card">
+                <div><div class="dc-icon">🚌</div><div class="dc-label">Student Pass</div><div class="dc-value" id="dp-sub">₺0</div></div>
+                <button class="card-add-btn" onclick="openAddData('Abonman')">+ Contribute</button>
+            </div>
+            <div class="detail-card">
+                <div><div class="dc-icon">☕</div><div class="dc-label">Coffee Price</div><div class="dc-value" id="dp-coffee">₺0</div></div>
+                <button class="card-add-btn" onclick="openAddData('Coffee')">+ Contribute</button>
+            </div>
+            <div class="detail-card">
+                <div><div class="dc-icon">⏱️</div><div class="dc-label">Avg. Travel Time</div><div class="dc-value" id="dp-commute">0 min</div></div>
+                <button class="card-add-btn" onclick="openAddData('Transport')">+ Contribute</button>
+            </div>
         </div>
     </div>
 
-    <div id="toast"><span id="toast-msg">Notification</span></div>
+    <div id="new-data-modal" class="modal-overlay">
+        <div class="modern-modal">
+            <div class="mm-header">
+                <div class="mm-title-group"><span id="mm-icon" class="mm-icon">🏠</span><div class="mm-title"><h3 id="mm-category">Rent</h3><span id="mm-city">Ankara</span></div></div>
+                <span class="mm-close" onclick="closeAddData()">✕</span>
+            </div>
+            <div class="mm-body">
+                <div class="mm-stat-box">
+                    <div class="mm-stat-label">Current Average</div>
+                    <div id="mm-current-val" class="mm-stat-value">...</div>
+                    <div class="mm-stat-sub">Fetched from database</div>
+                </div>
+                <div class="mm-input-group">
+                    <label class="mm-input-label">Enter New Data</label>
+                    <div class="mm-input-wrapper">
+                        <input type="number" id="mm-input-price" class="mm-input" placeholder="New Value...">
+                        <span id="mm-unit" class="mm-unit">₺</span>
+                    </div>
+                </div>
+                <button class="mm-btn" onclick="submitData()"><span>+</span> Save to Database</button>
+            </div>
+        </div>
+    </div>
 
-    <div id="login-modal" class="modal">
-        <h2 style="color:#ff9800; margin-top:0;">System Login</h2>
-        <input type="text" id="username" placeholder="Username (Any name or 'admin')">
+    <div id="login-modal" class="simple-modal">
+        <h2 style="color:#ff9800;">System Login</h2>
+        <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
         <button onclick="login()">ACCESS DASHBOARD</button>
         <p style="color:#666; font-size:12px; margin-top:15px; cursor:pointer;" onclick="document.getElementById('login-modal').style.display='none'">Close</p>
     </div>
 
-    <div id="add-data-modal" class="modal">
-        <h2 style="color:#4caf50; margin-top:0;">Contribute Data 📝</h2>
-        <p style="color:#aaa; font-size:12px; margin-bottom:15px;">Share prices from your city.</p>
-        
-        <select id="data-city">
-            <option value="Ankara">Ankara</option>
-            <option value="İstanbul">İstanbul</option>
-            <option value="İzmir">İzmir</option>
-            <option value="Trabzon">Trabzon</option>
-            <option value="Antalya">Antalya</option>
-        </select>
-
-        <select id="data-category">
-            <option value="Rent">🏠 Rent (1+1)</option>
-            <option value="Coffee">☕ Coffee</option>
-            <option value="Abonman">💳 Abonman</option>
-            <option value="Transport">🎫 Single Ticket</option>
-        </select>
-
-        <input type="number" id="data-price" placeholder="Price (TL)">
-        <button onclick="submitData()" style="background:#4caf50; color:white;">SUBMIT DATA</button>
-        <p style="color:#666; font-size:12px; margin-top:10px; cursor:pointer;" onclick="document.getElementById('add-data-modal').style.display='none'">Cancel</p>
-    </div>
+    <div id="toast"><span id="toast-msg">Notification</span></div>
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v8.2.0/dist/ol.js"></script>
     <script>
-        // --- GÜNCEL VERİ SETİ (İZMİR 480 TL) ---
-        const realMarketData = {
-            "İstanbul":  { rent: "35.000", coffee: "125.00", single: "17.70",  sub: "494" }, 
-            "Ankara":    { rent: "18.500", coffee: "85.00", single: "15.00", sub: "450" }, 
-            
-            // İzmir: Fiyat Düzeltildi 480 TL ✅
-            "İzmir":     { rent: "22.500", coffee: "95.00", single: "7.50",  sub: "480" },   
-            
-            "Eskişehir": { rent: "16.000", coffee: "70.00", single: "10.00",  sub: "250" }, 
-            "Bursa":     { rent: "19.000", coffee: "80.00", single: "9.00",  sub: "300" }, 
-            "Antalya":   { rent: "26.000", coffee: "100.00", single: "10.00",  sub: "300" }, 
-            
-            "Trabzon":   { rent: "14.500", coffee: "65.00", single: "12.00",  sub: "--" }, 
-            "Konya":     { rent: "13.500", coffee: "60.00", single: "6.00",  sub: "300" },
-            "Adana":     { rent: "15.500", coffee: "70.00", single: "9.50",  sub: "--" },
-            "Gaziantep": { rent: "16.500", coffee: "75.00", single: "13.00", sub: "--" }
+        // --- VARIABLES ---
+        let realMarketData = {}; 
+        let activeCities = [];
+        let currentPanelCity = "";
+        let currentUser = null; // LOGIN STATE
+        
+        // CONFIGURATION (Translated to English)
+        const categoryConfig = {
+            'Rent': { icon: '🏠', label: 'Rent (1+1)', unit: '₺/mo' },
+            'Coffee': { icon: '☕', label: 'Coffee Price', unit: '₺' },
+            'Abonman': { icon: '💳', label: 'Student Pass', unit: '₺/mo' },
+            'Transport': { icon: '⏱️', label: 'Travel Time', unit: 'min' },
+            'Salary': { icon: '💰', label: 'Net Salary', unit: '₺/mo' },
+            'Expense': { icon: '🛒', label: 'Monthly Expenses', unit: '₺/mo' }
         };
 
-        const activeCities = Object.keys(realMarketData); 
+        // --- FETCH DATA FROM SERVER ---
+        async function loadData() {
+            try {
+                const response = await fetch('/api/data'); 
+                realMarketData = await response.json();    
+                activeCities = Object.keys(realMarketData);
+                
+                updateMapStyles();
+                calculateGlobalStats();
+                console.log("Data updated:", realMarketData);
+            } catch (error) {
+                console.error("Error loading data:", error);
+                showToast("⚠️ Database connection error!");
+            }
+        }
 
-        // --- ORTALAMA HESAPLAMA MOTORU (OTOMATİK) ---
         function calculateGlobalStats() {
-            let totalRent = 0, countRent = 0;
-            let totalCoffee = 0, countCoffee = 0;
-            let totalSub = 0, countSub = 0;
-
+            let totalRent = 0, countRent = 0, totalCoffee = 0, countCoffee = 0, totalSub = 0, countSub = 0;
             Object.values(realMarketData).forEach(city => {
-                // Kira Hesapla
-                let r = parseFloat(city.rent.replace('.', ''));
-                if(r) { totalRent += r; countRent++; }
-
-                // Kahve Hesapla
-                let c = parseFloat(city.coffee);
-                if(c) { totalCoffee += c; countCoffee++; }
-
-                // Abonman Hesapla (Sadece geçerli olanları al, "--" olanları atla)
-                if(city.sub !== "-" && city.sub !== "--") {
-                    let s = parseFloat(city.sub);
-                    if(s) { totalSub += s; countSub++; }
-                }
+                let r = parseFloat(city.rent.replace('.', '')); if(r){ totalRent+=r; countRent++; }
+                let c = parseFloat(city.coffee); if(c){ totalCoffee+=c; countCoffee++; }
+                if(city.sub !== "-" && city.sub !== "--") { let s = parseFloat(city.sub); if(s){ totalSub+=s; countSub++; } }
             });
-
-            // Ekrana Yazdır
-            // Kira: Binlik ayracı koyarak yaz (₺18.250 gibi)
             document.getElementById('global-rent').innerText = '₺' + (totalRent / countRent).toLocaleString('tr-TR', {maximumFractionDigits: 0});
-            
-            // Kahve ve Ulaşım: Küsüratlı (₺72.50)
             document.getElementById('global-coffee').innerText = '₺' + (totalCoffee / countCoffee).toFixed(2);
             document.getElementById('global-trans').innerText = '₺' + (totalSub / countSub).toFixed(2);
         }
 
-        // --- 1. HARİTA AYARLARI ---
-        const map = new ol.Map({
-            target: 'map',
-            layers: [], 
-            view: new ol.View({
-                center: ol.proj.fromLonLat([35.2433, 39.0]), 
-                zoom: 6.5, minZoom: 5, maxZoom: 9
-            })
-        });
-
-        // --- 2. VERİ DOSYASI ---
-        const vectorSource = new ol.source.Vector({
-            url: './turkey.geojson',
-            format: new ol.format.GeoJSON()
-        });
-
-        // --- 3. STİL ---
+        // --- MAP SETUP ---
+        const map = new ol.Map({ target: 'map', layers: [], view: new ol.View({ center: ol.proj.fromLonLat([35.2433, 39.0]), zoom: 6.5, minZoom: 5, maxZoom: 9 }) });
+        const vectorSource = new ol.source.Vector({ url: './turkey.geojson', format: new ol.format.GeoJSON() });
+        let vectorLayer; 
         const styleFunction = function(feature) {
             const name = feature.get('name') || feature.get('Name') || "Unknown";
             const isActive = activeCities.includes(name);
-
             return new ol.style.Style({
-                fill: new ol.style.Fill({
-                    color: isActive ? 'rgba(255, 152, 0, 0.9)' : 'rgba(40, 40, 40, 1)'
-                }),
-                stroke: new ol.style.Stroke({
-                    color: '#111', width: 1
-                }),
-                text: new ol.style.Text({
-                    text: name,
-                    font: '10px Inter',
-                    fill: new ol.style.Fill({ color: isActive ? '#000' : '#666' }),
-                    stroke: new ol.style.Stroke({ color: isActive ? 'rgba(255,255,255,0.8)' : '#000', width: 2 })
-                })
+                fill: new ol.style.Fill({ color: isActive ? 'rgba(255, 152, 0, 0.9)' : 'rgba(40, 40, 40, 1)' }),
+                stroke: new ol.style.Stroke({ color: '#111', width: 1 }),
+                text: new ol.style.Text({ text: name, font: '10px Inter', fill: new ol.style.Fill({ color: isActive ? '#000' : '#666' }), stroke: new ol.style.Stroke({ color: isActive ? 'rgba(255,255,255,0.8)' : '#000', width: 2 }) })
             });
         };
-
-        const vectorLayer = new ol.layer.Vector({
-            source: vectorSource,
-            style: styleFunction
-        });
+        vectorLayer = new ol.layer.Vector({ source: vectorSource, style: styleFunction });
         map.addLayer(vectorLayer);
+        function updateMapStyles() { vectorLayer.changed(); }
 
-        // --- 4. TOOLTIP ---
-        const tooltip = document.getElementById('tooltip');
-        map.on('pointermove', function(evt) {
-            if (evt.dragging) return;
+        map.on('click', function(evt) {
             const feature = map.forEachFeatureAtPixel(evt.pixel, f => f);
             if (feature) {
-                let name = feature.get('name') || feature.get('Name');
-                const matchedCity = activeCities.find(city => city === name);
-
-                document.getElementById('tt-name').innerText = name;
-                
-                if(matchedCity) {
-                    const data = realMarketData[matchedCity];
-                    document.getElementById('tt-rent').innerText = '₺' + data.rent;
-                    document.getElementById('tt-coffee').innerText = '₺' + data.coffee;
-                    document.getElementById('tt-single').innerText = '₺' + data.single;
-                    
-                    const subText = data.sub !== "--" && data.sub !== "-" ? '₺' + data.sub + ' / mo' : 'Not Available';
-                    document.getElementById('tt-sub').innerText = subText;
-                    
-                } else {
-                    document.getElementById('tt-rent').innerText = 'No Data';
-                    document.getElementById('tt-coffee').innerText = '--';
-                    document.getElementById('tt-single').innerText = '--';
-                    document.getElementById('tt-sub').innerText = '--';
-                }
-                tooltip.style.display = 'block';
-                tooltip.style.left = (evt.pixel[0] + 20) + 'px';
-                tooltip.style.top = (evt.pixel[1] + 20) + 'px';
-                map.getTargetElement().style.cursor = 'pointer';
-            } else {
-                tooltip.style.display = 'none';
-                map.getTargetElement().style.cursor = '';
+                const name = feature.get('name') || feature.get('Name');
+                if (activeCities.includes(name)) openCityPanel(name);
             }
         });
 
-        // --- 5. GİRİŞ SİSTEMİ ---
+        // --- DETAIL PANEL LOGIC ---
+        function openCityPanel(cityName) {
+            currentPanelCity = cityName;
+            const data = realMarketData[cityName]; 
+            
+            document.getElementById('dp-city-name').innerText = cityName;
+            document.getElementById('dp-salary').innerText = '₺' + data.salary;
+            document.getElementById('dp-rent').innerText = '₺' + data.rent;
+            document.getElementById('dp-expense').innerText = '₺' + data.expense;
+            document.getElementById('dp-sub').innerText = (data.sub === '--' || data.sub === '-') ? 'N/A' : '₺' + data.sub;
+            document.getElementById('dp-coffee').innerText = '₺' + data.coffee;
+            document.getElementById('dp-commute').innerText = data.commute;
+
+            // AUTH CHECK
+            const buttons = document.querySelectorAll('.card-add-btn');
+            if (currentUser) {
+                buttons.forEach(btn => btn.style.display = 'block'); // Show
+            } else {
+                buttons.forEach(btn => btn.style.display = 'none'); // Hide
+            }
+
+            document.getElementById('city-detail-panel').style.display = 'block';
+        }
+        function closeCityPanel() { document.getElementById('city-detail-panel').style.display = 'none'; }
+
+        // --- ADD DATA LOGIC ---
+        function openAddData(categoryKey) {
+            const config = categoryConfig[categoryKey];
+            const cityData = realMarketData[currentPanelCity];
+            document.getElementById('mm-city').innerText = currentPanelCity;
+            document.getElementById('mm-category').innerText = config.label;
+            document.getElementById('mm-icon').innerText = config.icon;
+            document.getElementById('mm-unit').innerText = config.unit;
+            document.getElementById('mm-input-price').placeholder = "New Value...";
+            document.getElementById('mm-input-price').dataset.category = categoryKey; 
+
+            let currentVal = "--";
+            if(categoryKey === 'Rent') currentVal = '₺' + cityData.rent;
+            else if(categoryKey === 'Coffee') currentVal = '₺' + cityData.coffee;
+            else if(categoryKey === 'Abonman') currentVal = cityData.sub === '-' ? '--' : '₺' + cityData.sub;
+            else if(categoryKey === 'Transport') currentVal = cityData.commute;
+            else if(categoryKey === 'Salary') currentVal = '₺' + cityData.salary;
+            else if(categoryKey === 'Expense') currentVal = '₺' + cityData.expense;
+            document.getElementById('mm-current-val').innerText = currentVal;
+            document.getElementById('new-data-modal').style.display = 'flex';
+        }
+        function closeAddData() { document.getElementById('new-data-modal').style.display = 'none'; }
+
+        // --- SUBMIT DATA (Instant Update) ---
+        async function submitData() {
+            const inputVal = document.getElementById('mm-input-price').value;
+            const category = document.getElementById('mm-input-price').dataset.category;
+            
+            if(!inputVal) { showToast("⚠️ Please enter a value!"); return; }
+
+            const payload = {
+                city: currentPanelCity,
+                category: category,
+                value: inputVal
+            };
+
+            try {
+                const res = await fetch('/api/update', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+
+                if(res.ok) {
+                    showToast("✅ Saved to database!");
+                    closeAddData();
+                    document.getElementById('mm-input-price').value = "";
+                    
+                    await loadData(); 
+                    openCityPanel(currentPanelCity);
+                } else {
+                    showToast("❌ Save failed!");
+                }
+            } catch (err) {
+                console.error(err);
+                showToast("❌ Server error!");
+            }
+        }
+
+        // --- LOGIN / LOGOUT ---
         function login() {
             const u = document.getElementById('username').value.trim();
             const p = document.getElementById('password').value;
-            const statusText = document.getElementById('user-status');
-
-            if (u === "") {
-                showToast("⚠️ Please enter a username!");
-                return;
-            }
-
-            if (u === 'admin' && p === '1234') {
-                statusText.innerText = "LOGGED IN: ADMIN";
-                statusText.style.color = "#d32f2f"; 
-                showToast("🔓 Welcome back, Admin!");
-            } else {
-                statusText.innerText = "LOGGED IN: " + u.toUpperCase();
-                statusText.style.color = "#4caf50";
-                showToast("🚀 Welcome " + u + "! Ready to contribute.");
-            }
             
+            if (u === "") { showToast("⚠️ Enter username!"); return; }
+            
+            currentUser = u; 
+            
+            if (u === 'admin' && p === '1234') { 
+                document.getElementById('user-status').innerText = "LOGGED IN: ADMIN";
+                document.getElementById('user-status').style.color = "#d32f2f";
+                showToast("🔓 Admin login successful."); 
+            } else { 
+                document.getElementById('user-status').innerText = "LOGGED IN: " + u.toUpperCase();
+                document.getElementById('user-status').style.color = "#4caf50";
+                showToast("🚀 Welcome " + u + "!"); 
+            }
+
             document.getElementById('login-modal').style.display = 'none';
             document.querySelector('.btn-login').style.display = 'none';
             document.querySelector('.btn-logout').style.display = 'block';
-            document.querySelector('.btn-add').style.display = 'block';
         }
 
         function logout() {
-            document.querySelector('.btn-login').style.display = 'block';
-            document.querySelector('.btn-logout').style.display = 'none';
-            document.querySelector('.btn-add').style.display = 'none';
-            
+            currentUser = null; 
             document.getElementById('user-status').innerText = "GUEST VIEW";
             document.getElementById('user-status').style.color = "#666";
-            document.getElementById('username').value = "";
-            document.getElementById('password').value = "";
             
-            showToast("👋 Logged out successfully.");
+            document.querySelector('.btn-login').style.display = 'block'; 
+            document.querySelector('.btn-logout').style.display = 'none';
+            document.getElementById('username').value = ""; 
+            document.getElementById('password').value = ""; 
+            
+            const buttons = document.querySelectorAll('.card-add-btn');
+            buttons.forEach(btn => btn.style.display = 'none');
+
+            showToast("👋 Logged out.");
         }
 
-        function submitData() {
-            const city = document.getElementById('data-city').value;
-            const cat = document.getElementById('data-category').value;
-            const price = document.getElementById('data-price').value;
+        function showToast(message) { const x = document.getElementById("toast"); document.getElementById("toast-msg").innerText = message; x.style.visibility = "visible"; setTimeout(function(){ x.style.visibility = "hidden"; }, 3000); }
+        
+        const tooltip = document.getElementById('tooltip');
+        map.on('pointermove', function(evt) { if(evt.dragging) return; const feature = map.forEachFeatureAtPixel(evt.pixel, f => f); if(feature) { const name = feature.get('name') || feature.get('Name'); if(activeCities.includes(name)) { tooltip.innerHTML = `<b>${name}</b><br><span style='font-size:11px; color:#aaa;'>Click for Details</span>`; tooltip.style.display='block'; tooltip.style.left=(evt.pixel[0]+15)+'px'; tooltip.style.top=(evt.pixel[1]+15)+'px'; map.getTargetElement().style.cursor='pointer'; } } else { tooltip.style.display='none'; map.getTargetElement().style.cursor=''; } });
 
-            if(!price) {
-                showToast("⚠️ Please enter a price!");
-                return;
-            }
-            showToast(`✅ Added: ${cat} in ${city} for ₺${price}`);
-            document.getElementById('add-data-modal').style.display = 'none';
-            document.getElementById('data-price').value = "";
-        }
-
-        function showToast(message) {
-            const x = document.getElementById("toast");
-            document.getElementById("toast-msg").innerText = message;
-            x.style.visibility = "visible";
-            setTimeout(function(){ x.style.visibility = "hidden"; }, 3000);
-        }
-
-        // Sayfa Yüklenince Ortalamaları Hesapla
-        calculateGlobalStats();
-
+        // --- START ---
+        loadData(); 
     </script>
 </body>
 </html>
