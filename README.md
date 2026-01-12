@@ -2,11 +2,11 @@
 
 **StudentRadar** is a comprehensive **Web GIS application** designed to visualize real-life student living costs, transport fees, and academic opportunities on an interactive map.
 
-Unlike static maps, this project leverages a **crowdsourcing model**, allowing verified students to contribute real-time price data (Rent, Coffee, Transport) to help prospective students make informed decisions.
+**Unlike static maps, this project relies on data shared by students**, allowing verified users to contribute real-time price data (Rent, Coffee, Transport) to help prospective students make informed decisions.
 
 ---
 
-## 📸 API & Performance Proofs (Assignment Evidence)
+## 📸 API & Performance Proofs 
 The system includes a fully documented Swagger API and Performance Monitoring tools as required.
 
 <table border="0">
@@ -33,25 +33,25 @@ The system includes a fully documented Swagger API and Performance Monitoring to
 
 ## 🌟 Key Features & Vision
 
-### 1. 🚍 Transport & Subscription (Abonman) Analysis
+### 1. 🚍 Transport & Subscription Analysis
 One of the biggest expenses for students is commuting. StudentRadar specifically tracks:
 - **Monthly Subscription (Abonman) Fees:** Comparative costs of student travel cards by city.
 - **Commute Costs:** Real-time data on single-ride bus/metro fares for students.
 
 ### 2. 🏛️ City & University Guide
-The system provides geospatial insights for academic planning. When a user explores a city:
+The system provides insights for academic planning. When a user explores a city:
 - **Top Universities:** Lists high-ranked universities in that specific region.
 - **Academic Insight:** Displays brief info relevant to the student demographic.
 
-### 3. ☕ & 🏠 Cost of Living Index (Crowdsourced)
+### 3. ☕ & 🏠 Cost of Living Index
 Inspired by the "Ortalama.net" concept but tailored for students:
 - **Rent Index:** Average prices for 1+1 apartments and dormitories.
 - **Coffee & Food Index:** The "Latte Index" – average cost of a cup of coffee.
 - **Dynamic Updates:** Students log in and add data points, keeping the map current.
 
-### 4. 🔐 User Roles & Security (RBAC)
+### 4. 🔐 User Roles & Security
 The system implements strict Role-Based Access Control:
-- **Guest (Candidate Student):** View-only access to the map, heatmaps, and cost averages.
+- **Guest (Candidate Student):** View-only access to the map and cost averages.
 - **Student (Contributor):** Can log in to add new price data points for their location.
 - **Admin (Moderator):** Full control to manage users and system performance.
 
@@ -89,10 +89,13 @@ The API is fully documented using Swagger/OpenAPI 3.0 standards.
 
 This project is built on a modern **Full-Stack Web GIS** architecture:
 
-* **Frontend:** * **HTML5 & CSS3:** Modern "Dark Mode" UI/UX.
+* **Frontend:**
+  * **HTML5 & CSS3:** Modern "Dark Mode" UI/UX.
   * **OpenLayers:** High-performance mapping library for rendering spatial data (GeoJSON).
-* **Backend:** * **Node.js & Express.js:** Robust RESTful API handling client requests.
-* **Database (Spatial):** * **PostgreSQL & PostGIS:** The backbone of the project. Used for storing geospatial points and executing spatial queries.
+* **Backend:**
+  * **Node.js & Express.js:** Robust RESTful API handling client requests.
+* **Database (Spatial):**
+  * **PostgreSQL & PostGIS:** The backbone of the project. Used for storing geospatial points and executing spatial queries.
 * **Security & Docs:**
   * **JWT & Bcrypt:** For secure authentication.
   * **Swagger UI:** For automatic API documentation.
@@ -101,16 +104,16 @@ This project is built on a modern **Full-Stack Web GIS** architecture:
 
 ## 🚀 How to Run
 1. Install dependencies: `npm install`
-2. Update database config in `app.js` (password).
+2. Update database config in `app.js` 
 3. Start the server: `node app.js`
 4. Visit: `http://localhost:3000`
 5. Docs: `http://localhost:3000/api-docs`
 
 ---
 
-## 🎯 Conclusion & Future Scope
+## 🎯 Conclusion
 
-**StudentRadar** represents a significant step forward in visualizing the economic realities of student life in Turkey. By moving beyond static maps and integrating a **crowdsourced, community-driven data model**, this project transforms raw geographical data into actionable insights for university candidates and current students.
+**StudentRadar** represents a significant step forward in visualizing the economic realities of student life in Turkey. By moving beyond static maps and integrating a **community-driven data model**, this project transforms raw geographical data into actionable insights for university candidates and current students.
 
 ### Key Takeaways:
 - **Social Impact:** Addresses the urgent need for transparent living cost data for students amid economic fluctuations.
