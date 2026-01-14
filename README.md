@@ -6,77 +6,77 @@
 
 ---
 
-## 📸 API & Performance Proofs 
+## 📸 API & Performance Proofs (Assignment Evidence)
 The system includes a fully documented Swagger API and Performance Monitoring tools as required.
 
 <table border="0">
   <tr>
-    <td width="33%" align="center">
-      <img src="swagger-ui.png" width="100%" />
+    <td width="50%" align="center">
+      <img src="swagger.png" width="100%" />
       <br />
       <b>Swagger UI Dashboard</b>
     </td>
-    <td width="33%" align="center">
-      <img src="perf-test.png" width="100%" />
+    <td width="50%" align="center">
+      <img src="performance.png" width="100%" />
       <br />
       <b>DB Performance Test (1.2ms)</b>
-    </td>
-    <td width="33%" align="center">
-      <img src="data-result.png" width="100%" />
-      <br />
-      <b>Data API Response</b>
     </td>
   </tr>
 </table>
 
 ---
 
-## 🌟 Key Features & Vision
+## 🌟 Application Tour & Key Features
 
-### 1. 🚍 Transport & Subscription Analysis
-One of the biggest expenses for students is commuting. StudentRadar specifically tracks:
-- **Monthly Subscription (Abonman) Fees:** Comparative costs of student travel cards by city.
-- **Commute Costs:** Real-time data on single-ride bus/metro fares for students.
+### 1. 🌍 Interactive GIS Dashboard
+The landing page features a high-performance **OpenLayers** map. Cities with active user data are highlighted in **Orange**. The sidebar displays real-time national averages calculated from the PostgreSQL database.
+![Dashboard](dashboard.png)
 
-### 2. 🏛️ City & University Guide
-The system provides insights for academic planning. When a user explores a city:
-- **Top Universities:** Lists high-ranked universities in that specific region.
-- **Academic Insight:** Displays brief info relevant to the student demographic.
+### 2. 🏙️ City Analytics & Search
+Users can browse all 81 provinces via a responsive grid layout or use the real-time search bar. Clicking on a city opens the detail panel.
+![All Cities Grid](all-cities.png)
 
-### 3. ☕ & 🏠 Cost of Living Index
-Inspired by the "Ortalama.net" concept but tailored for students:
-- **Rent Index:** Average prices for 1+1 apartments and dormitories.
-- **Coffee & Food Index:** The "Latte Index" – average cost of a cup of coffee.
-- **Dynamic Updates:** Students log in and add data points, keeping the map current.
+### 3. 🚍 Living Costs & Transport Analysis
+The detail panel breaks down costs into Rent, Coffee Index, and **Abonman (Student Pass)** fees. It allows students to compare their expenses with city averages.
+![City Details](city-detail.png)
 
-### 4. 🔐 User Roles & Security
-The system implements strict Role-Based Access Control:
-- **Guest (Candidate Student):** View-only access to the map and cost averages.
-- **Student (Contributor):** Can log in to add new price data points for their location.
-- **Admin (Moderator):** Full control to manage users and system performance.
+### 4. 🎓 Academic Insight (Top Universities)
+StudentRadar is not just about money. Each city panel lists the **Top 5 Universities**, helping candidates match living costs with academic quality.
+![Universities](universities.png)
+
+### 5. ➕ Crowdsourced Data Entry (CRUD)
+Logged-in users ("Student" role) can contribute to the system. The data entry modal allows users to input current prices, which updates the city's average in real-time.
+![Contribute Modal](contribute.png)
+
+### 6. ❓ User Guidance & Privacy
+A comprehensive FAQ section explains how the data is collected (Law of Large Numbers), ensuring users understand that data is anonymous and safe.
+![FAQ Modal](faq.png)
 
 ---
 
 ## ✅ Assignment Requirements Met
 
-### 1. User Types (20%)
-System manages distinct roles as defined above (Guest, Student, Admin). Admin users have exclusive access to performance testing endpoints.
+### 1. User Types & Roles (20%)
+The system implements strict Role-Based Access Control (RBAC):
+- **Guest:** View-only access to the map and averages.
+- **Student:** Can log in (JWT) to add new price data points.
+- **Admin:** Full control to manage users and system performance.
 
 ### 2. Authentication (15%)
 Users are authenticated via a **JWT (JSON Web Token)** system:
-* **Register:** Users create an account via `/api/auth/register`.
-* **Login:** Users receive a `Bearer Token` via `/api/auth/login`.
-* **Secure Access:** The frontend stores this token and sends it in the header for protected actions (e.g., Adding Data).
+* **Register/Login:** Users receive a `Bearer Token` via `/api/auth/login`.
+* **Secure Access:** The frontend stores this token and sends it in the header for protected actions.
 
 ### 3. CRUD Operations (15%)
 * **Create:** Users contribute data via the modal.
 * **Read:** Map displays colored polygons based on cost density.
 * **Update:** New data entries automatically update the city's average cost in real-time.
+* **Delete:** Admin users have access to delete endpoints to manage data quality.
 
 ### 4. Performance Monitoring (25%)
 We implemented an indexing strategy on the PostgreSQL database to optimize query performance using **B-Tree Indexes**.
 * **Without Index:** Query time ~15ms.
-* **With Index:** Query time **~1.2ms** (See screenshot above).
+* **With Index:** Query time **~1.2ms** (See proof screenshot above).
 * **Result:** >10x speed improvement.
 
 ### 5. API Development (Swagger) (25%)
@@ -104,7 +104,7 @@ This project is built on a modern **Full-Stack Web GIS** architecture:
 
 ## 🚀 How to Run
 1. Install dependencies: `npm install`
-2. Update database config in `app.js` 
+2. Update database config in `app.js` (password).
 3. Start the server: `node app.js`
 4. Visit: `http://localhost:3000`
 5. Docs: `http://localhost:3000/api-docs`
