@@ -34,7 +34,7 @@ The landing page features a high-performance **OpenLayers** map. Cities with act
 
 ### 2. 🏙️ City Analytics & Search
 Users can browse all 81 provinces via a responsive grid layout or use the real-time search bar. Clicking on a city opens the detail panel.
-![All Cities Grid](all-cities.png)
+![All Cities Grid](universities.png)
 
 ### 3. 🚍 Living Costs & Transport Analysis
 The detail panel breaks down costs into Rent, Coffee Index, and **Abonman (Student Pass)** fees. It allows students to compare their expenses with city averages.
@@ -42,7 +42,7 @@ The detail panel breaks down costs into Rent, Coffee Index, and **Abonman (Stude
 
 ### 4. 🎓 Academic Insight (Top Universities)
 StudentRadar is not just about money. Each city panel lists the **Top 5 Universities**, helping candidates match living costs with academic quality.
-![Universities](universities.png)
+![Universities](all-cities.png)
 
 ### 5. ➕ Crowdsourced Data Entry (CRUD)
 Logged-in users ("Student" role) can contribute to the system. The data entry modal allows users to input current prices, which updates the city's average in real-time.
