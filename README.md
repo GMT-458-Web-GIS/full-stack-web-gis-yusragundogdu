@@ -12,12 +12,12 @@ The system includes a fully documented Swagger API and Performance Monitoring to
 <table border="0">
   <tr>
     <td width="50%" align="center">
-      <img src="swagger.png" width="100%" />
+      <img src="swagger-ui.png" width="100%" />
       <br />
       <b>Swagger UI Dashboard</b>
     </td>
     <td width="50%" align="center">
-      <img src="performance.png" width="100%" />
+      <img src="perf-test.png" width="100%" />
       <br />
       <b>DB Performance Test (1.2ms)</b>
     </td>
@@ -38,18 +38,22 @@ Users can browse all 81 provinces via a responsive grid layout or use the real-t
 
 ### 3. 🚍 Living Costs & Transport Analysis
 The detail panel breaks down costs into Rent, Coffee Index, and **Abonman (Student Pass)** fees. It allows students to compare their expenses with city averages.
-![City Details](contribute.png)
+![City Details](aa.png)
 
 ### 4. 🎓 Academic Insight (Top Universities)
 StudentRadar is not just about money. Each city panel lists the **Top 5 Universities**, helping candidates match living costs with academic quality.
 ![Universities](universities.png)
 
-### 5. ➕ Crowdsourced Data Entry (CRUD)
-Logged-in users ("Student" role) can contribute to the system. The data entry modal allows users to input current prices, which updates the city's average in real-time.
+### 5. 🔐 Login & Auth System
+The platform uses JWT Authentication. Users must login to contribute data, ensuring quality control. Guest users can only view the map.
 ![Contribute Modal](city-detail.png)
 
-### 6. ❓ User Guidance & Privacy
-A comprehensive FAQ section explains how the data is collected (Law of Large Numbers), ensuring users understand that data is anonymous and safe.
+### 6. ➕ Crowdsourced Data Entry (CRUD)
+Logged-in users can contribute to the system via the **Contribute Modal**. This interface allows students to input current prices for Rent, Coffee, etc. The backend automatically recalculates the city average using these new inputs.
+![Contribute Modal](contribute.png)
+
+### 7. ❓ User Guidance & Privacy (FAQ)
+A comprehensive FAQ section explains how the data is collected (Law of Large Numbers), ensuring users understand that data is anonymous and safe. It also clarifies the project's vision.
 ![FAQ Modal](faq.png)
 
 ---
