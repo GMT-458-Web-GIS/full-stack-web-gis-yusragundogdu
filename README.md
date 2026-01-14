@@ -38,7 +38,7 @@ Users can browse all 81 provinces via a responsive grid layout or use the real-t
 
 ### 3. 🚍 Living Costs & Transport Analysis
 The detail panel breaks down costs into Rent, Coffee Index, and **Abonman (Student Pass)** fees. It allows students to compare their expenses with city averages.
-![City Details](city-detail.png)
+![City Details](contribute.png)
 
 ### 4. 🎓 Academic Insight (Top Universities)
 StudentRadar is not just about money. Each city panel lists the **Top 5 Universities**, helping candidates match living costs with academic quality.
@@ -46,7 +46,7 @@ StudentRadar is not just about money. Each city panel lists the **Top 5 Universi
 
 ### 5. ➕ Crowdsourced Data Entry (CRUD)
 Logged-in users ("Student" role) can contribute to the system. The data entry modal allows users to input current prices, which updates the city's average in real-time.
-![Contribute Modal](contribute.png)
+![Contribute Modal](city-detail.png)
 
 ### 6. ❓ User Guidance & Privacy
 A comprehensive FAQ section explains how the data is collected (Law of Large Numbers), ensuring users understand that data is anonymous and safe.
