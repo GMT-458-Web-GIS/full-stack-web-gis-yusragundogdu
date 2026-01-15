@@ -1,6 +1,6 @@
 # 🎓 StudentRadar - The Ultimate Student Cost & Life Map 🇹🇷
 
-# 🚀 CANLI DEMO (LIVE PREVIEW)
+# 🚀LIVE PREVIEW
 **Click here to test project:** 👉 [http://16.16.170.117:3000]
 
 **StudentRadar** is a comprehensive **Web GIS application** designed to visualize real-life student living costs, transport fees, and academic opportunities on an interactive map.
