@@ -1,7 +1,7 @@
 # 🎓 StudentRadar - The Ultimate Student Cost & Life Map 🇹🇷
 
-# 🚀LIVE PREVIEW
-**Click here to test project:** 👉 [http://16.16.170.117:3000]
+# 🚀 LIVE PREVIEW
+**Click here to test project:** 👉 [http://16.16.170.117:3000](http://16.16.170.117:3000)
 
 **StudentRadar** is a comprehensive **Web GIS application** designed to visualize real-life student living costs, transport fees, and academic opportunities on an interactive map.
 
@@ -9,8 +9,8 @@
 
 ---
 
-## 📸 API & Performance Proofs 
-The system includes a fully documented Swagger API and Performance Monitoring tools as required.
+## 📸 API & Performance Proofs
+The system includes a fully documented Swagger API, Performance Monitoring tools, and verified Postman Security tests.
 
 <table border="0">
   <tr>
@@ -23,6 +23,24 @@ The system includes a fully documented Swagger API and Performance Monitoring to
       <img src="perf-test.png" width="100%" />
       <br />
       <b>DB Performance Test (1.2ms)</b>
+    </td>
+  </tr>
+</table>
+
+### 🔐 Postman Authentication Tests (AWS Live)
+Evidence of secure user registration and JWT Token generation on the live server.
+
+<table border="0">
+  <tr>
+    <td width="50%" align="center">
+      <img src="postman-register.png" width="100%" />
+      <br />
+      <b>1. User Registration (POST)</b>
+    </td>
+    <td width="50%" align="center">
+      <img src="postman-login.png" width="100%" />
+      <br />
+      <b>2. Login & Token Gen (POST)</b>
     </td>
   </tr>
 </table>
